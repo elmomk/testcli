@@ -3,6 +3,7 @@ use dirs::home_dir;
 use dotenvy::dotenv;
 use std::env;
 use std::process::Command;
+use std::path::Path;
 
 #[derive(Parser)]
 struct Cli {
@@ -37,6 +38,7 @@ fn main() {
     // if .runrsenv does not exist, load scripts/.runrsenv
     // if scripts/.runrsenv does not exist, load append my_home with ".runcli/config"
     // if $HOME/.runcli/config does not exist, throw an error
+    println!("loading environment variables");
     dotenvy::from_filename(".runrsenv").ok();
     dotenvy::from_filename("scripts/.runrsenv").ok();
     dotenvy::from_filename(my_home).ok();
@@ -49,6 +51,13 @@ fn main() {
     };
     // .expect("PROJECT_PATH must be set");
     println!("project path is: {}", project_path);
+    // check if project_path exists
+    // if not, throw an error
+    // if yes, continue
+    println!("project path exists: {}", Path::new(&project_path).exists());
+    if !Path::new(&project_path).exists() {
+        panic!("project path does not exist");
+    }
     // print environment variables
     // println!("env: {:?}", std::env::vars().collect::<Vec<_>>());
 
